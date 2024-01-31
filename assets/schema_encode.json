@@ -1,0 +1,81 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema",
+    "description": "Schema for the file provided with params.input",
+    "type": "array",
+    "items": {
+        "type": "object",
+        "properties": {
+            "File_accession": {
+                "type": "string", 
+                "meta": ["id"]
+            },
+            "file_format": {
+                "type": "string",
+                "meta": ["file_format"]
+            },
+            "file_type": {
+                "type": "string",
+                "meta": ["file_type"]
+            },
+            "file_format_type": {
+                "type": "string",
+                "meta": ["file_format_type"]
+            },
+            "output_type":{
+                "type": "string",
+                "meta": ["output_type"]
+            },
+            "assay_title": {
+                "type": "string",
+                "meta": ["assay_title"]
+            },
+            "assembly": {
+                "type": "string",
+                "meta": ["assembly"]
+            },
+            "link": {
+                "type": "string",
+                "meta": ["link"]
+            },
+            "Experiment_accession": {
+                "type": "string",
+                "meta": ["Experiment_accession"]
+            },
+            "Biosample_term_name": {
+                "type": "string",
+                "meta": ["Biosample_term_name"]
+            },
+            "Biosample_accession": {
+                "type": "string",
+                "meta": ["Biosample_accession"]
+            },
+            "Organism": {
+                "type": "string",
+                "meta": ["Organism"]
+            },
+            "Biosample_ontology": {
+                "type": "string",
+                "meta": ["Biosample_ontology"]
+            },
+            "Perturbed": {
+                "type": "string",
+                "meta": ["Perturbed"]
+            },
+            "Biological_replicate": {
+                "type": "string",
+                "meta": ["Biological_replicate"]
+            },
+            "Technical_replicate": {
+                "type": "string",
+                "meta": ["Technical_replicate"]
+            },
+            "Biosample_type": {
+                "type": "string",
+                "meta": ["Biosample_type"]
+            }
+            
+        },
+        "required": ["File_accession", "link"]
+    }
+}
+
