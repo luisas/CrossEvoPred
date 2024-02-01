@@ -4,7 +4,7 @@ process DOWNLOAD_ENCODE{
     tuple val(meta)
 
     output:
-    tuple val(meta), file("*")
+    tuple val(meta), file("*"), emit: data
 
     script:
     """

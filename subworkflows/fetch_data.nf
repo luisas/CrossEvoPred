@@ -7,5 +7,9 @@ workflow FETCH_DATA {
     encode_sheet
 
     main: 
-    DOWNLOAD_ENCODE (encode_sheet)
+    DOWNLOAD_ENCODE(encode_sheet)
+    
+
+    emit: 
+    data = DOWNLOAD_ENCODE.out.data
 }
