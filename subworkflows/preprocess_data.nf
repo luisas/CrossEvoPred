@@ -14,6 +14,5 @@ workflow PREPROCESS_DATA{
                         }
 
     BIG_TO_BEDGRAPH(functional_data_branched.bigWig)
-    BIG_TO_BEDGRAPH.out.bedgraph.view()
 
 }
