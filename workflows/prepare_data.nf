@@ -21,12 +21,22 @@ workflow PREPARE_DATA {
         // Split dataset into train, test, and validation sets
         SPLIT_DATA(genome, chunk_size)
         train =  SPLIT_DATA.out.train
+        validation = SPLIT_DATA.out.validation
+        test = SPLIT_DATA.out.test
     }else{
         // Small test file (this mode is for testing purposes only)
         functional_data = Channel.fromPath("${params.bedgraph_test_file}").map{it -> [[:], it]}
         test_bed_file = Channel.fromPath("${params.test_bed_file}").map{it -> [[:], it]}
-        CREATE_DATASET_OBJECT( test_bed_file, genome, functional_data, "${params.bin_size}") 
+        CREATE_DATASET_OBJECT( test_bed_file, genome, functional_data, "${params.bin_size}")
+        train =  CREATE_DATASET_OBJECT.out.train
+        validation = CREATE_DATASET_OBJECT.out.validation
+        test = CREATE_DATASET_OBJECT.out.test 
     } 
+
+    emit: 
+    train 
+    validation 
+    test 
 
 
 }

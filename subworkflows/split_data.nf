@@ -9,4 +9,9 @@ workflow SPLIT_DATA {
 
     main: 
     SPLIT_RANDOM(genome, chunk_size)
+
+    emit:
+    train = SPLIT_RANDOM.out.train
+    validation = SPLIT_RANDOM.out.validation
+    test = SPLIT_RANDOM.out.test
 }
