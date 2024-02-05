@@ -1,27 +1,27 @@
-
 #!/usr/bin/env python
-
+import torch
 import argparse
-from torch.utils.data import DataLoader
-from .crossevopred.src.model import DummyTrainer
-parser = argparse.ArgumentParser(description='Train a model')
+from crossevopred.src.model.dummy_model import DummyModel
+from crossevopred.src.model.dummy_trainer import DummyTrainer
 
-# ----------------- Arguments -----------------
-# traininig data
+
+parser = argparse.ArgumentParser(description='Train a model on a given dataset')
 parser.add_argument('--training_dataset', type=str, help='path to training data')
-# model
-parser.add_argument('--model', type=str, help='path to model')
+parser.add_argument('--config', type=str, help='path to config file')
+parser.add_argument('--model_name', type=str, help='path to model')
 args = parser.parse_args()
 
+print("Arguments parsed")
+trainining_datatset_loader = torch.load(args.training_dataset)
 
-train_loader    = DataLoader(args.training_dataset)
-validate_loader = DataLoader(args.validation_dataset)
-
-# Initialize the model
+print("Data loaded")
+# Initialize the model and trainer 
+model   = DummyModel()
 trainer = DummyTrainer()
 
+print("Model initialized")
 # Train the model
-trainer.train(train_loader, validate_loader)
+trainer.train(trainining_datatset_loader, config_file=args.config, model=model)
 
 # Save the model 
-trainer.save_mode(args.model)
+model.save_model(args.model_name)

@@ -9,7 +9,7 @@ process CREATE_DATASET_OBJECT{
         val(binsize)
     
         output:
-        tuple val(meta), file("*")
+        tuple val(meta), file("*.pth"), emit: object
     
         script:
         """

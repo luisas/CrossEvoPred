@@ -19,6 +19,10 @@ class ExpressionDataset(Dataset):
         message("Sequences loaded", verbose=self.verbose)
         self.labels = get_labels_from_bedGraph(bed, bedGraph, bin_size)
         message("Labels loaded", verbose=self.verbose)
+
+        self.sequences = torch.tensor(self.sequences).float()
+        self.labels = torch.tensor(self.labels).float()
+        message("Sequences converted to tensors", verbose=self.verbose)
         
     def __len__(self):
         return len(self.sequences)

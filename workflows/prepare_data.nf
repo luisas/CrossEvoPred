@@ -28,9 +28,14 @@ workflow PREPARE_DATA {
         functional_data = Channel.fromPath("${params.bedgraph_test_file}").map{it -> [[:], it]}
         test_bed_file = Channel.fromPath("${params.test_bed_file}").map{it -> [[:], it]}
         CREATE_DATASET_OBJECT( test_bed_file, genome, functional_data, "${params.bin_size}")
-        train =  CREATE_DATASET_OBJECT.out.train
-        validation = CREATE_DATASET_OBJECT.out.validation
-        test = CREATE_DATASET_OBJECT.out.test 
+        train =  CREATE_DATASET_OBJECT.out.object
+        validation = CREATE_DATASET_OBJECT.out.object
+        test = CREATE_DATASET_OBJECT.out.object
+        // rename validation and test to avoid conflicts
+        // I still want the file, but renamed
+        //validation = validation.map{meta, file -> [meta, file.baseName + "_validation.bed"]}
+        //test = test.map{meta, file -> [meta, file.baseName + "_test.bed"]}
+
     } 
 
     emit: 

@@ -3,3 +3,4 @@ out
 .nextflow
 work
 .~lock*
+__pycache__

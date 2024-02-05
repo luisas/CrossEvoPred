@@ -1,14 +1,15 @@
 process TRAIN_MODEL {
 
     input:
-    tuple val(meta), training_dataset
-    tuple val(meta), validation_dataset
+    tuple val(meta),  file(training_dataset)
+    tuple val(meta2), file(config)
+    //tuple val(meta2), file(validation_dataset)
 
     output:
-    file("model.pkl"), emit: model
+    tuple val(meta), file("model.pkl"), emit: model
 
     script:
     """
-    train_model.py --training_dataset $training_dataset --validation_dataset $validation_dataset --model_name model.pkl
+    train.py --training_dataset $training_dataset --config $config --model_name "model.pkl"
     """
 }
