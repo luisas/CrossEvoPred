@@ -10,6 +10,7 @@ nextflow.enable.dsl = 2
 include { validateParameters; paramsHelp; paramsSummaryLog; fromSamplesheet } from 'plugin/nf-validation'
 include {   PREPARE_DATA  } from './workflows/prepare_data'
 include {   TRAIN_MODEL   } from './modules/train_model'
+include {   EVALUATE_MODEL   } from './modules/evaluate_model'
 
 // Prepare the pipeline parameters
 chunk_size = "${params.chunk_size}"
@@ -37,7 +38,7 @@ workflow CROSS_EVO_PRED {
     TRAIN_MODEL ( PREPARE_DATA.out.train, config)
 
     // Evaluate the model
-    //EVALUATE_MODEL (TRAIN_MODEL.out.model, PREPARE_DATA.out.test)
+    EVALUATE_MODEL (TRAIN_MODEL.out.model, PREPARE_DATA.out.test)
 
 }
 

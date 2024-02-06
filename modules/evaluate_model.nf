@@ -1,14 +1,14 @@
 process EVALUATE_MODEL {
 
     input:
-    tuple val(meta), model
-    tuple val(meta), test_dataset
+    tuple val(meta), file(model)
+    tuple val(meta2), file(test_dataset)
 
     output:
-    file("*"), emit: evaluation
+    tuple val(meta),file("*.csv"), emit: evaluation
 
     script:
     """
-    evaluate_model.py --model $model --test_dataset $test_dataset 
+    evaluate.py --model $model --test_dataset $test_dataset --output ${model.baseName}_evaluation.csv
     """
 }

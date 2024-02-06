@@ -123,6 +123,22 @@ class Encoder():
 
         return encoded_sequences
 
+    def decode_one_hot(self,encoded_sequence):
+        decoded_sequence = ""
+        encoded_sequence = encoded_sequence.reshape(4, -1)
+        for one_hot_vector in encoded_sequence.T:
+            if np.sum(one_hot_vector) == 0:
+                decoded_sequence += "N"
+            else:
+                index = np.argmax(one_hot_vector)
+                if index < len(self.alphabet):
+                    decoded_sequence += self.alphabet[index]
+                else:
+                    decoded_sequence += "N"
+        # make to uppercase
+        decoded_sequence = decoded_sequence.upper()
+        return decoded_sequence
+
 class DNAEncoder(Encoder):
     """ Custom class to use Encoder with DNA sequences. """
 
