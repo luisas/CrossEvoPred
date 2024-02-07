@@ -15,7 +15,7 @@ class ExpressionDataset(Dataset):
         with open(input_file, 'r') as file:
             for line in file:
                 line = line.strip().split()
-                self.sequence = line[3]
+                self.sequence = line[3].upper()
                 self.labels = [float(label) for label in line[4].split(',')]
 
         with open(file, 'w') as f:

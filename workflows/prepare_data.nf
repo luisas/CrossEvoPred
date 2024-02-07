@@ -27,14 +27,17 @@ workflow PREPARE_DATA {
         // Split dataset into train, test, and validation sets
         // and extract the corresponding fasta files
         SPLIT_DATA(genome, chunk_size)
-        train_fasta = PREP_INPUT_FILE_TRAIN(SPLIT_DATA.out.train, functional_data, genome, "${params.bin_size}", "mean")
-        validation_fasta = PREP_INPUT_FILE_VALIDATION(SPLIT_DATA, functional_data, genome, "${params.bin_size}", "mean")
-        test_fasta = PREP_INPUT_FILE_TEST(SPLIT_DATA, functional_data, genome, "${params.bin_size}", "mean")    
+        //train_fasta      = PREP_INPUT_FILE_TRAIN(SPLIT_DATA.out.train, functional_data, genome, "${params.bin_size}", "mean")
+        //validation_fasta = PREP_INPUT_FILE_VALIDATION(SPLIT_DATA.out.validation, functional_data, genome, "${params.bin_size}", "mean")
+        test_fasta       = PREP_INPUT_FILE_TEST(SPLIT_DATA.out.test, functional_data, genome, "${params.bin_size}", "mean")    
         
+        train = SPLIT_DATA.out.train
+        validation = SPLIT_DATA.out.validation
+        test = SPLIT_DATA.out.test
         // Create dataset objects
-        train      = CREATE_DATASET_OBJECT_TRAIN(train_fasta, functional_data, "${params.bin_size}")
-        validation = CREATE_DATASET_OBJECT_VALIDATION(validation_fasta, functional_data, "${params.bin_size}")
-        test       = CREATE_DATASET_OBJECT_TEST(test_fasta, functional_data, "${params.bin_size}")
+        //train      = CREATE_DATASET_OBJECT_TRAIN(train_fasta, functional_data, "${params.bin_size}")
+        //validation = CREATE_DATASET_OBJECT_VALIDATION(validation_fasta, functional_data, "${params.bin_size}")
+        //test       = CREATE_DATASET_OBJECT_TEST(test_fasta, functional_data, "${params.bin_size}")
 
     }else{
         // Small test file (this mode is for testing purposes only)
