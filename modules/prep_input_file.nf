@@ -12,7 +12,7 @@ process PREP_INPUT_FILE{
 
     output:
     //tuple val(meta2), file("${bed.baseName}_sequences_and_labels.bed"), emit: training_file
-    tuple val(meta2), file("${bed.baseName}_sequences_and_labels.bed"), emit: training_file
+    tuple val(meta2), file("${bed.baseName}-sequences-and-labels.bed"), emit: training_file
   
     script:
     """
@@ -40,6 +40,6 @@ process PREP_INPUT_FILE{
     # -----------------------------------------------------------
     # Use the extracted informations to create the training file
     # -----------------------------------------------------------
-    bedtools getfasta -fi $genome -bed ${bed.baseName}_labels.bed -bedOut > ${bed.baseName}_sequences_and_labels.bed  
+    bedtools getfasta -fi $genome -bed ${bed.baseName}_labels.bed -bedOut > ${bed.baseName}-sequences-and-labels.bed  
     """
 }

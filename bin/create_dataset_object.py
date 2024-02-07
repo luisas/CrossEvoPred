@@ -11,7 +11,7 @@ parser.add_argument('-o', '--output_dataset', help='Output dataset file', requir
 args = parser.parse_args()
 
 # create dataset object
-dataset = ExpressionDataset(args.input_file, args.binsize)
+dataset = ExpressionDataset(args.input_file)
 
 # save dataset object
 torch.save(dataset, args.output_dataset)

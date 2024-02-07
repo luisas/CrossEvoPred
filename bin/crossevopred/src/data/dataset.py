@@ -8,25 +8,24 @@ class ExpressionDataset(Dataset):
     
     def __init__(self, input_file, encode = True, verbose = True):
         self.verbose = verbose
-        file = "log.txt"
-        with open(file, 'w') as f:
-            f.write("log file created")
+        
+        self.sequences = []
+        self.labels = []
         
         with open(input_file, 'r') as file:
             for line in file:
                 line = line.strip().split()
-                self.sequence = line[3].upper()
-                self.labels = [float(label) for label in line[4].split(',')]
+                # add sequence to list
+                self.sequences.append(line[4].upper())
+                # add label to list
+                labels = [float(label) for label in line[3].split(',')]
+                self.labels.append(labels)
 
-        with open(file, 'w') as f:
-            f.write("file parsed")
             
         encoder = DNAEncoder()
         if encode:
             self.sequences = encoder.encode_sequences(self.sequences, batch_size=1000)
 
-        with open(file, 'w') as f:
-            f.write("sequences encoded")
 
         self.sequences = torch.tensor(self.sequences).float()
         self.labels = torch.tensor(self.labels).float()

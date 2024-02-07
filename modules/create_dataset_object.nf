@@ -6,15 +6,13 @@ process CREATE_DATASET_OBJECT{
         label "process_medium"
 
         input:
-        tuple val(meta), file(fasta)
-        tuple val(meta3), file(bedgraph)
-        val(binsize)
+        tuple val(meta), file(input_file)
     
         output:
         tuple val(meta), file("*.pth"), emit: object
     
         script:
         """
-        create_dataset_object.py -f $fasta -bg $bedgraph -bs $binsize -o ${fasta.baseName}.pth
+        create_dataset_object.py -i $input_file -o ${input_file.baseName}.pth 
         """
 }

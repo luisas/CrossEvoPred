@@ -33,11 +33,10 @@ workflow PREPARE_DATA {
         
         train = SPLIT_DATA.out.train
         validation = SPLIT_DATA.out.validation
-        test = SPLIT_DATA.out.test
         // Create dataset objects
         //train      = CREATE_DATASET_OBJECT_TRAIN(train_fasta, functional_data, "${params.bin_size}")
         //validation = CREATE_DATASET_OBJECT_VALIDATION(validation_fasta, functional_data, "${params.bin_size}")
-        //test       = CREATE_DATASET_OBJECT_TEST(test_fasta, functional_data, "${params.bin_size}")
+        test       = CREATE_DATASET_OBJECT_TEST(test_fasta)
 
     }else{
         // Small test file (this mode is for testing purposes only)
