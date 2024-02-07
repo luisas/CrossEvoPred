@@ -1,7 +1,9 @@
 process SPLIT_RANDOM{
 
+    container 'luisas/pytorch_crossevo'    
+
     input:
-    tuple val(meta), path(genome)
+    tuple val(meta), path(genome), path(fai)
     val(chunk_size)
 
     output:

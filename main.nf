@@ -24,10 +24,12 @@ workflow CROSS_EVO_PRED {
 
 
     encode_sheet = Channel.fromSamplesheet('encode_sheet')
-    
-    genome = Channel.fromPath("${params.genome}/chr1.fa").map{
-                             it -> [[id:it.parent.baseName], it] }.groupTuple(by:0)
-    
+
+    genome = Channel.fromPath("${params.genome}/chr1.fa*").map{
+                             it -> [[id:it.parent.baseName], it] }.groupTuple(by:0).map{
+                                meta, files -> [meta, files[0], files[1]]
+                             }
+
     config = Channel.fromPath("${params.config}").map{
                                 it -> [[id:it.parent.baseName], it] }.groupTuple(by:0)
 
@@ -35,10 +37,10 @@ workflow CROSS_EVO_PRED {
     PREPARE_DATA ( genome, chunk_size, encode_sheet)
 
     // Train the model
-    TRAIN_MODEL ( PREPARE_DATA.out.train, config)
+    //TRAIN_MODEL ( PREPARE_DATA.out.train, config)
 
     // Evaluate the model
-    EVALUATE_MODEL (TRAIN_MODEL.out.model, PREPARE_DATA.out.test)
+    //EVALUATE_MODEL (TRAIN_MODEL.out.model, PREPARE_DATA.out.test)
 
 }
 

@@ -1,4 +1,5 @@
 process TRAIN_MODEL {
+    container 'luisas/pytorch_crossevo'    
 
     input:
     tuple val(meta),  file(training_dataset)
