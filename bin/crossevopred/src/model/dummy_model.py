@@ -14,7 +14,7 @@ class DummyModel(nn.Module):
 
     def __init__(self):
         super(DummyModel, self).__init__()
-        self.fc1 = nn.Linear(40, 1)
+        self.fc1 = nn.Linear(4000, 1)
 
     def forward(self, x):
         x = swish(self.fc1(x))
