@@ -36,7 +36,8 @@ class ExpressionDataset(Dataset):
         return len(self.sequences)
     
     def __getitem__(self, idx):
-        return self.sequences[idx].reshape(1,-1), self.labels[idx]
+        return self.sequences[idx], self.labels[idx]
+        #return self.sequences[idx].reshape(1,-1), self.labels[idx]
     
     
 
