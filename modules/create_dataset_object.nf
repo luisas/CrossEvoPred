@@ -3,7 +3,7 @@
 process CREATE_DATASET_OBJECT{
     
         container 'luisas/pytorch_crossevo'    
-        label "process_medium"
+        label "process_lowcpu_highmem"
 
         input:
         tuple val(meta), file(input_file)
