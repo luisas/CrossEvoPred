@@ -18,6 +18,7 @@ class Trainer(ABC):
         # setting model to train or eval mode
         model.train()
 
+        losses = []
 
         for batch_idx, (sequence, label) in enumerate(data_loader, 0):
 
@@ -32,10 +33,15 @@ class Trainer(ABC):
             
             # compute loss
             current_loss = loss_function(output.squeeze(), label.float())
+            losses.append(current_loss.item())
 
             # backward and udpate parameters
             current_loss.backward()
             optimizer.step()
+
+        loss = sum(losses) / len(losses)
+        
+        message(f"Epoch avg loss: {loss}", verbose=self.verbose)
 
     @abstractmethod
     def train():

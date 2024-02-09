@@ -13,13 +13,16 @@ class DummyTrainer(Trainer):
 
     def train(self, train_set, config_file, model=None):
 
+        # Initalize model
         model = DummyModel() if model is None else model
+
+        # Load config file
         with open(config_file, "r") as config_file:
             config = yaml.safe_load(config_file)
         
         # Pass a loss function to the model
         loss_function = globals()[config["loss_function"]]()
-
+        
         optimizer = optim.Adam(model.parameters(), lr=config['learning_rate'])
         
         for epoch in range(config['epochs']):

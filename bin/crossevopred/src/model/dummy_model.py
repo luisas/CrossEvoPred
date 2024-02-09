@@ -19,7 +19,7 @@ class DummyModel(nn.Module):
         self.alphabet_size = 4
 
         # first convolutional layer
-        self.nfilters_conv1 = 300
+        self.nfilters_conv1 = 50
         self.kernel_size_1 = 19
         self.maxpool1_size = 3
         self.maxpool1_stride = 3
@@ -49,11 +49,8 @@ class DummyModel(nn.Module):
         
         self.linear_layer2 = nn.Linear(self.linear_layer1_size, self.label_size)
 
-                
-        
 
     def forward(self, x):
-        print("forwarding...")
         x = self.conv1(x)
         x = self.linear_layer1(x.reshape(-1))
         x = self.linear_layer2(x)

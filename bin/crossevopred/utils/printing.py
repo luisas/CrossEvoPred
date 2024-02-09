@@ -9,4 +9,5 @@ def message(*args, verbose=True):
     if verbose:
         date = get_time()
         args = [str(i) for i in args]
-        print(date, ' - ', ''.join(args))
+        #print(date, ' - ', ''.join(args))
+        print(' - ', ' '.join(args))
