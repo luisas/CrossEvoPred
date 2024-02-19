@@ -1,4 +1,4 @@
-epochs: 3
-learning_rate: 0.010827136334823542
+epochs: 2
+learning_rate: 0.010374540118847362
 loss_function: PoissonNLLLoss
 optimizer: Adam
