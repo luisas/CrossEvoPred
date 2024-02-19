@@ -2,7 +2,7 @@
 import torch
 import argparse
 from crossevopred.src.model.dummy_model import DummyModel
-from crossevopred.src.model.dummy_trainer import DummyTrainer
+from bin.crossevopred.src.model.tainer import DummyTrainer
 
 
 parser = argparse.ArgumentParser(description='Train a model on a given dataset')

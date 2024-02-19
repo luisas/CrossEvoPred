@@ -2,7 +2,6 @@ import math
 import torch 
 import torch.nn as nn
 import torch.nn.functional as F
-from ..eval.losses import PearsonCorrelationLoss
 import pandas as pd
 from ..data.encoder import *
 
@@ -64,7 +63,7 @@ class DummyModel(nn.Module):
         self.to(device)
         self.eval()
         encoder = DNAEncoder()
-        pearson = PearsonCorrelationLoss()
+        pearson = nn.PoissonNLLLoss()
         correlations = []
         with torch.no_grad():
             for sequence, label in test_dataset_loader:

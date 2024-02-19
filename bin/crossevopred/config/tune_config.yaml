@@ -1,0 +1,26 @@
+tune_config: 
+  mode: "max"
+  metric: "accuracy"
+  num_samples: 1
+
+scheduler: 
+  "ASHAScheduler"
+
+scheduler_config:
+  max_t: 1
+  grace_period: 1
+  reduction_factor: 2
+
+search_space: 
+  learning_rate:
+    lower: 0.01
+    upper: 0.011
+  epochs:
+    choices: [2, 3, 4]
+  loss_function:
+    choices: ["PoissonNLLLoss", "MSELoss"]
+  optimizer:
+    choices: ["Adam", "SGD"]
+
+
+
