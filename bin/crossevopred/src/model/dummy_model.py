@@ -4,10 +4,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 import pandas as pd
 from ..data.encoder import *
-
-def swish(x):
-    return x * torch.sigmoid(x)
-
+import torch.nn.init as init
 
 class DummyModel(nn.Module):
 
@@ -24,7 +21,7 @@ class DummyModel(nn.Module):
         self.maxpool1_stride = 3
 
         # linear layers
-        self.linear_layer1_size = 1000
+        self.linear_layer1_size = 1
         self.dropout_1 = 0.3
 
         # ----------------------------------------------------------------------
@@ -34,11 +31,11 @@ class DummyModel(nn.Module):
         self.conv1 = nn.Sequential(
                         nn.Conv1d(in_channels = self.alphabet_size, out_channels= self.nfilters_conv1, kernel_size = self.kernel_size_1),
                         nn.BatchNorm1d(length_after_conv1),
-                        nn.ReLU(), 
+                        nn.ReLU(),
                         nn.MaxPool1d(kernel_size=self.maxpool1_size, stride=self.maxpool1_stride)
                     )
         conv1_output_size = math.floor((length_after_conv1 - self.maxpool1_size ) / self.maxpool1_stride + 1)
-
+        
         # ----------------------------------------------------------------------
         # First linear layer
         # ----------------------------------------------------------------------
@@ -54,6 +51,7 @@ class DummyModel(nn.Module):
         x = self.linear_layer1(x.reshape(-1))
         x = self.linear_layer2(x)
         return x
+
 
     def save_model(self, path):
         torch.save(self.state_dict(), path)
@@ -75,3 +73,19 @@ class DummyModel(nn.Module):
         return pd.DataFrame(correlations)
         
                 
+    def initialize_weights(self, initializer_name):
+        initializer = getattr(init, initializer_name)
+        for m in self.modules():
+            if isinstance(m, nn.Conv1d):
+                initializer(m.weight)
+                if m.bias is not None:
+                    init.constant_(m.bias, 0)
+            elif isinstance(m, nn.Linear):
+                initializer(m.weight)
+                if m.bias is not None:
+                    init.constant_(m.bias, 0)
+            elif isinstance(m, nn.BatchNorm1d):
+                init.constant_(m.weight, 1)
+                init.constant_(m.bias, 0)
+                init.constant_(m.running_mean, 0)
+                init.constant_(m.running_var, 1)

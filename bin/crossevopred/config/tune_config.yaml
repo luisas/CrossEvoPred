@@ -1,6 +1,6 @@
 tune_config: 
-  mode: "max"
-  metric: "accuracy"
+  mode: "min"
+  metric: "validation_loss"
   num_samples: 1
 
 scheduler: 
@@ -13,10 +13,12 @@ scheduler_config:
 
 search_space: 
   learning_rate:
-    lower: 0.01
-    upper: 0.011
+    lower: 0.0001
+    upper: 0.1
   epochs:
-    choices: [2, 3, 4]
+    lower: 5
+    upper: 20
+    integer: true
   loss_function:
     choices: ["PoissonNLLLoss", "MSELoss"]
   optimizer:

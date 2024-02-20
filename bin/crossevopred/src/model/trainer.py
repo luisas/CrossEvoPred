@@ -12,11 +12,15 @@ import torch
 from abc import ABC
 import os
 import json
+from ..data.encoder import *
 
 class Trainer(ABC):
 
-    def __init__(self, model, training_loader, validation_loader, test_loader, verbose=False) -> None:
+    def __init__(self, model, training_loader, validation_loader, test_loader, save_training_infos = True, verbose=False) -> None:
+        # General attributes
         self.verbose = verbose
+        self.save_training_infos = save_training_infos
+        self._tuning = False
         # Training infos
         self.training_infos = {}
         # Model 
@@ -27,33 +31,75 @@ class Trainer(ABC):
         self.test_loader = test_loader
 
     def train(self, config):
+        """
+        Train the model using the configuration file
 
+        If _tuning is set to true, the training will be evaluated on the validation set and the loss will be reported to the Ray Tune scheduler
+        otherwise, normal training will be performed.
+
+        If self.save_training_infos is set to True, information about the training will be saved in the training_infos attribute
+        ( never when tuning )
+
+        Args:
+            config (str): Path to the configuration file
+    
+        """
+
+        # if config is a string, load the configuration file
+        if isinstance(config, str):
+            with open(config, "r") as config_file:
+                config = yaml.safe_load(config_file)
+
+        # Set wether to save training infos (never when tuning)
+        if self._tuning:
+            save_training_infos = False
+        else:
+            save_training_infos = self.save_training_infos
+
+        # Set model to training mode
+        self.model.train()
         loss_function = getattr(nn, config['loss_function'])()
         optimizer = getattr(optim, config['optimizer'])(self.model.parameters(), lr=config['learning_rate'])
         
-        # Dictionary with number of eppochs and loss
-        training_infos = {"loss": []}
-        training_infos["n_epochs"] = config['epochs']
+        # Dictionary with number of epochs and loss
+        if save_training_infos:
+            training_infos = {"loss": []}
+            training_infos["n_epochs"] = config['epochs']
+            training_infos["epoch"] = list(range(1, config["epochs"]+1))
+
+        # Iterate over epochs
         for epoch in range(config['epochs']):
             message(f"Epoch {epoch+1}/{config['epochs']}", verbose=self.verbose)
             epoch_infos = self._train_epoch(self.training_loader, optimizer, loss_function)
-            training_infos["loss"].append(epoch_infos["loss"])
+            loss = epoch_infos["loss"]
+            message(f"Epoch avg loss: {loss}", verbose=self.verbose)
+            if save_training_infos:
+                training_infos["loss"].append(loss)
 
-        training_infos["epoch"] = range(1, len(training_infos["loss"])+1)
-        self.training_infos = training_infos
+        # Save training infos
+        if save_training_infos:   
+            self.training_infos = training_infos
 
-        # tell to ray tune that the training is finished
-        #tune.report(train_loss=training_infos["loss"][-1])
-        #train.report({"train_loss": training_infos["loss"][-1]} )
-        train.report(metrics={"loss": 0, "accuracy": 0})
-        return training_infos["loss"][-1]   
+        # Evaluate loss on validation set, if tuning
+        if self._tuning:
+            self.model.eval()
+            validation_loss = self._evaluate_loss(self.validation_loader, loss_function)
+            train.report(metrics={ "validation_loss": validation_loss })
 
     def tune(self, config, best_config_file = "./ray_tune/best_config.yaml"):
-
+        """
+        Tune the model using the configuration file
+        
+        Args:
+            config (str): Path to the configuration file
+            best_config_file (str): Path to the file where the best configuration will be saved
+        """
+        
+        self._tuning = True
+        
         # Load tuning configuration file
         with open(config, "r") as config_file:
             config = yaml.safe_load(config_file)
-
         
         # Create scheduler
         scheduler = globals()[config["scheduler"]](**config["scheduler_config"])
@@ -76,18 +122,27 @@ class Trainer(ABC):
 
         # Start tuning
         results = tuner.fit()
+        self._tuning = False
 
         # Save best config
         if not os.path.exists(os.path.dirname(best_config_file)):
             os.makedirs(os.path.dirname(best_config_file))
         with open(best_config_file, "w") as file:
             yaml.dump(results.get_best_result().config, file)
-
+        
         message(f"Best config saved in {best_config_file}", verbose=self.verbose)
         
 
 
     def _train_epoch(self, data_loader, optimizer, loss_function):
+        """
+        Train the model for one epoch
+
+        Args:
+            data_loader (torch.utils.data.DataLoader): Data loader
+            optimizer (torch.optim.Optimizer): Optimizer
+            loss_function (torch.nn.Module): Loss function
+        """
         # setting device
         # use cuda if available, otherwise use cpu
         device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
@@ -117,15 +172,21 @@ class Trainer(ABC):
 
         loss = sum(losses) / len(losses)
         epoch_infos["loss"] = (loss)
-        message(f"Epoch avg loss: {loss}", verbose=self.verbose)
         return epoch_infos
 
 
 
 
     def _evaluate_loss(self, data_loader, loss_function):
+        """
+        Evaluate the loss of the model on a dataset
 
-        device = next(self.model.parameters()).device  # Get device of model
+        Args:
+            data_loader (torch.utils.data.DataLoader): Data loader
+            loss_function (torch.nn.Module): Loss function
+        """
+
+        device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
         total_loss = 0.0
         num_samples = 0
@@ -137,7 +198,7 @@ class Trainer(ABC):
                 output = self.model(sequence)
                 loss = loss_function(output.squeeze(), label.float())
 
-                total_loss += loss.item() * sequence.size(0)  # Multiply by batch size
+                total_loss += loss.item() * sequence.size(0)  
                 num_samples += sequence.size(0)
 
         return total_loss / num_samples
