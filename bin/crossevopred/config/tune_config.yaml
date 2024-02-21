@@ -1,13 +1,13 @@
 tune_config: 
   mode: "min"
   metric: "validation_loss"
-  num_samples: 1
+  num_samples: 2
 
 scheduler: 
   "ASHAScheduler"
 
 scheduler_config:
-  max_t: 1
+  max_t: 100
   grace_period: 1
   reduction_factor: 2
 
@@ -17,12 +17,12 @@ search_space:
     upper: 0.1
   epochs:
     lower: 5
-    upper: 20
+    upper: 50
     integer: true
   loss_function:
-    choices: ["PoissonNLLLoss", "MSELoss"]
+    choices: ["PoissonNLLLoss"]
   optimizer:
-    choices: ["Adam", "SGD"]
+    choices: ["Adam"]
 
 
 

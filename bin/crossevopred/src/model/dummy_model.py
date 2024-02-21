@@ -41,10 +41,14 @@ class DummyModel(nn.Module):
         # ----------------------------------------------------------------------
         self.linear_layer1 = nn.Sequential(nn.Linear(conv1_output_size*self.nfilters_conv1, self.linear_layer1_size),
                                            nn.ReLU(),
-                                           nn.Dropout(self.dropout_1)) 
-        
-        self.linear_layer2 = nn.Linear(self.linear_layer1_size, self.label_size)
+                                           nn.Dropout(self.dropout_1))
 
+        # not trainable
+        self.linear_layer1[0].weight.requires_grad = False 
+        self.linear_layer1[0].bias.requires_grad = False
+
+        self.linear_layer2 = nn.Linear(self.linear_layer1_size, self.label_size)
+        
 
     def forward(self, x):
         x = self.conv1(x)

@@ -58,7 +58,6 @@ class Trainer(ABC):
 
         # Set model to training mode
         self.model.train()
-        loss_function = getattr(nn, config['loss_function'])()
         optimizer = getattr(optim, config['optimizer'])(self.model.parameters(), lr=config['learning_rate'])
         
         # Dictionary with number of epochs and loss
@@ -70,7 +69,7 @@ class Trainer(ABC):
         # Iterate over epochs
         for epoch in range(config['epochs']):
             message(f"Epoch {epoch+1}/{config['epochs']}", verbose=self.verbose)
-            epoch_infos = self._train_epoch(self.training_loader, optimizer, loss_function)
+            epoch_infos = self._train_epoch(self.training_loader, optimizer, config["loss_function"])
             loss = epoch_infos["loss"]
             message(f"Epoch avg loss: {loss}", verbose=self.verbose)
             if save_training_infos:
@@ -83,7 +82,7 @@ class Trainer(ABC):
         # Evaluate loss on validation set, if tuning
         if self._tuning:
             self.model.eval()
-            validation_loss = self._evaluate_loss(self.validation_loader, loss_function)
+            validation_loss = self._evaluate_loss(self.validation_loader, config["loss_function"])
             train.report(metrics={ "validation_loss": validation_loss })
 
     def tune(self, config, best_config_file = "./ray_tune/best_config.yaml"):
@@ -147,6 +146,7 @@ class Trainer(ABC):
         # use cuda if available, otherwise use cpu
         device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
+        loss_function = getattr(nn, loss_function)()
 
         epoch_infos = {}
         losses = []
@@ -175,9 +175,7 @@ class Trainer(ABC):
         return epoch_infos
 
 
-
-
-    def _evaluate_loss(self, data_loader, loss_function):
+    def _evaluate_loss(self, data_loader, loss_function, all_losses = False):
         """
         Evaluate the loss of the model on a dataset
 
@@ -186,20 +184,30 @@ class Trainer(ABC):
             loss_function (torch.nn.Module): Loss function
         """
 
+        loss_function = getattr(nn, loss_function)()
         device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
         total_loss = 0.0
         num_samples = 0
 
+        if all_losses:
+            losses = []
         with torch.no_grad():  # Disable gradient computation
             for batch_idx, (sequence, label) in enumerate(data_loader):
                 sequence, label = sequence.to(device), label.to(device)
 
                 output = self.model(sequence)
+
                 loss = loss_function(output.squeeze(), label.float())
+                if all_losses:
+                    losses += [loss.item()]
 
                 total_loss += loss.item() * sequence.size(0)  
                 num_samples += sequence.size(0)
 
-        return total_loss / num_samples
+        if all_losses:
+            return losses
+        else:
+            return total_loss / num_samples
+
 
