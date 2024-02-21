@@ -37,10 +37,10 @@ workflow CROSS_EVO_PRED {
     PREPARE_DATA ( genome, chunk_size, encode_sheet)
 
     // Train the model
-    TRAIN_MODEL ( PREPARE_DATA.out.train, config)
+    //TRAIN_MODEL ( PREPARE_DATA.out.train, config)
 
     // Evaluate the model
-    EVALUATE_MODEL (TRAIN_MODEL.out.model, PREPARE_DATA.out.test)
+    //EVALUATE_MODEL (TRAIN_MODEL.out.model, PREPARE_DATA.out.test)
 
 }
 

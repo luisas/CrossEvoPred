@@ -9,6 +9,10 @@ include { PREP_INPUT_FILE as PREP_INPUT_FILE_TRAIN;
           PREP_INPUT_FILE as PREP_INPUT_FILE_VALIDATION; 
           PREP_INPUT_FILE as PREP_INPUT_FILE_TEST } from '../modules/prep_input_file'
 
+include { SPLIT_FILE as SPLIT_TRAIN_BED; 
+          SPLIT_FILE as SPLIT_VALIDATION_BED; 
+          SPLIT_FILE as SPLIT_TEST_BED } from '../modules/split_file'
+
 workflow PREPARE_DATA {
 
     take: 
@@ -31,10 +35,19 @@ workflow PREPARE_DATA {
         validation_fasta = PREP_INPUT_FILE_VALIDATION(SPLIT_DATA.out.validation, functional_data, genome, "${params.bin_size}", "mean")
         test_fasta       = PREP_INPUT_FILE_TEST(SPLIT_DATA.out.test, functional_data, genome, "${params.bin_size}", "mean")    
         
+        // If too big, split the bed file into smaller files
+        // and create the dataset objects
+        SPLIT_TRAIN_BED(train_fasta, "${params.bed_file_max_size}")
+        SPLIT_VALIDATION_BED(validation_fasta, "${params.bed_file_max_size}")
+        SPLIT_TEST_BED(test_fasta, "${params.bed_file_max_size}")
+        
+        SPLIT_TRAIN_BED.out.split_files.view()
+
         // Create dataset objects
-        train      = CREATE_DATASET_OBJECT_TRAIN(train_fasta)
-        validation = CREATE_DATASET_OBJECT_VALIDATION(validation_fasta)
-        test       = CREATE_DATASET_OBJECT_TEST(test_fasta)
+        train      = CREATE_DATASET_OBJECT_TRAIN(SPLIT_TRAIN_BED.out.split_files.transpose())
+        validation = CREATE_DATASET_OBJECT_VALIDATION(SPLIT_VALIDATION_BED.out.split_files.transpose())
+        test       = CREATE_DATASET_OBJECT_TEST(SPLIT_TEST_BED.out.split_files.transpose())
+
 
     }else{
         // Small test file (this mode is for testing purposes only)
@@ -46,10 +59,10 @@ workflow PREPARE_DATA {
         test = CREATE_DATASET_OBJECT.out.object
     } 
 
-    emit: 
-    train 
-    validation 
-    test 
+    // emit: 
+    // train 
+    // validation 
+    // test 
 
 
 }
