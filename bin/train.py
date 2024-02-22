@@ -50,4 +50,4 @@ print("Trainer initialized")
 trainer.train( args.config )
 
 # Save the model 
-model.save_model(args.model_name)
+model.save_model( args.model_name )

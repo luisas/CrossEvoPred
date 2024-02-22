@@ -13,6 +13,7 @@ from abc import ABC
 import os
 import json
 from ..data.encoder import *
+import wandb
 
 class Trainer(ABC):
 

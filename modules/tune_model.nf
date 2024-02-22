@@ -3,14 +3,18 @@ process TUNE_MODEL {
 
     input:
     tuple val(meta),  file(training_dataset)
-    tuple val(meta2), file(config)
-    //tuple val(meta2), file(validation_dataset)
+    tuple val(meta2), file(validation_dataset)
+    tuple val(meta3), file(tune_config)
 
     output:
-    tuple val(meta), file("model.pkl"), emit: model
+    tuple val(meta), file("${prefix}.yaml"), emit: config
 
     script:
+    prefix = task.ext.prefix ?: "best_config"
     """
-    train.py --training_dataset $training_dataset --config $config --model_name "model.pkl"
+    tune.py --training_dataset $training_dataset \
+            --validation_dataset $validation_dataset \
+            --tune_config $tune_config \
+            --out_config "${prefix}.yaml"
     """
 }

@@ -8,8 +8,9 @@ nextflow.enable.dsl = 2
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 */
 include { validateParameters; paramsHelp; paramsSummaryLog; fromSamplesheet } from 'plugin/nf-validation'
-include {   PREPARE_DATA  } from './workflows/prepare_data'
-include {   TRAIN_MODEL   } from './modules/train_model'
+include {   PREPARE_DATA     } from './workflows/prepare_data'
+include {   TRAIN_MODEL      } from './modules/train_model'
+include {   TUNE_MODEL       } from './modules/tune_model'
 include {   EVALUATE_MODEL   } from './modules/evaluate_model'
 
 // Prepare the pipeline parameters
@@ -35,12 +36,25 @@ workflow CROSS_EVO_PRED {
 
     // Prepare the data into pytorch dataset objects
     PREPARE_DATA ( genome, chunk_size, encode_sheet )
+    training_dataset = PREPARE_DATA.out.train
+    validation_dataset = PREPARE_DATA.out.validation
+    test_dataset = PREPARE_DATA.out.test
 
-    //PREPARE_DATA.out.train.view()
     // Train the model
-    TRAIN_MODEL ( PREPARE_DATA.out.train, config)
+    if( params.tune )  {
+        tune_config = Channel.fromPath("${params.tune_config}").map{
+                            it -> [[id:it.parent.baseName], it] }.groupTuple(by:0)
+        tune_config.view()
+        TUNE_MODEL ( training_dataset, validation_dataset, tune_config)
+        config = TUNE_MODEL.out.config
+    }
 
+
+    // Merge train and validation 
     // Evaluate the model
+    train_and_validation = training_dataset.combine(validation_dataset, by:0 ).map{
+                            meta, train, validation -> [meta, train+validation]}
+    train_and_validation.view()
     //EVALUATE_MODEL (TRAIN_MODEL.out.model, PREPARE_DATA.out.test)
 
 }

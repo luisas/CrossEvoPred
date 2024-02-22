@@ -37,16 +37,14 @@ workflow PREPARE_DATA {
         test_fasta       = PREP_INPUT_FILE_TEST(SPLIT_DATA.out.test, functional_data, genome, "${params.bin_size}", "mean")    
         
         // If too big, split the bed file into smaller files
-        // and create the dataset objects
         SPLIT_TRAIN_BED(train_fasta, "${params.bed_file_max_size}")
         SPLIT_VALIDATION_BED(validation_fasta, "${params.bed_file_max_size}")
         SPLIT_TEST_BED(test_fasta, "${params.bed_file_max_size}")
         
         // Create dataset objects
-        train      = CREATE_DATASET_OBJECT_TRAIN(SPLIT_TRAIN_BED.out.split_files.transpose())
-        validation = CREATE_DATASET_OBJECT_VALIDATION(SPLIT_VALIDATION_BED.out.split_files.transpose())
-        test       = CREATE_DATASET_OBJECT_TEST(SPLIT_TEST_BED.out.split_files.transpose())
-
+        train      = CREATE_DATASET_OBJECT_TRAIN(SPLIT_TRAIN_BED.out.split_files.transpose()).unique()
+        validation = CREATE_DATASET_OBJECT_VALIDATION(SPLIT_VALIDATION_BED.out.split_files.transpose()).unique()
+        test       = CREATE_DATASET_OBJECT_TEST(SPLIT_TEST_BED.out.split_files.transpose()).unique()
 
     }else{
         // Small test file (this mode is for testing purposes only)
