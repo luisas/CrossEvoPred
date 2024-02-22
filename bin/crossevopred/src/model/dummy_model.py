@@ -21,7 +21,7 @@ class DummyModel(nn.Module):
         self.maxpool1_stride = 3
 
         # linear layers
-        self.linear_layer1_size = 1
+        self.linear_layer1_size = 100
         self.dropout_1 = 0.3
 
         # ----------------------------------------------------------------------
@@ -30,12 +30,12 @@ class DummyModel(nn.Module):
         length_after_conv1  = self.sequence_length - self.kernel_size_1 + 1
         self.conv1 = nn.Sequential(
                         nn.Conv1d(in_channels = self.alphabet_size, out_channels= self.nfilters_conv1, kernel_size = self.kernel_size_1),
-                        nn.BatchNorm1d(length_after_conv1),
+                        nn.BatchNorm1d(self.nfilters_conv1),
                         nn.ReLU(),
                         nn.MaxPool1d(kernel_size=self.maxpool1_size, stride=self.maxpool1_stride)
                     )
-        conv1_output_size = math.floor((length_after_conv1 - self.maxpool1_size ) / self.maxpool1_stride + 1)
-        
+        conv1_output_size = math.floor((length_after_conv1 - (self.maxpool1_size - 1)) / self.maxpool1_stride + 1)
+
         # ----------------------------------------------------------------------
         # First linear layer
         # ----------------------------------------------------------------------
@@ -52,7 +52,8 @@ class DummyModel(nn.Module):
 
     def forward(self, x):
         x = self.conv1(x)
-        x = self.linear_layer1(x.reshape(-1))
+        x = x.view(x.size(0), -1)
+        x = self.linear_layer1(x)
         x = self.linear_layer2(x)
         return x
 

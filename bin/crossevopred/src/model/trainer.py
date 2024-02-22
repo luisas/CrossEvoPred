@@ -151,19 +151,18 @@ class Trainer(ABC):
         epoch_infos = {}
         losses = []
 
-        for batch_idx, (sequence, label) in enumerate(data_loader, 0):
+        for batch_idx, (sequence_batch, label_batch) in enumerate(data_loader, 0):
 
             # send data to device
-            sequence,label = sequence.to(device), label.to(device)
+            sequence_batch,label_batch = sequence_batch.to(device), label_batch.to(device)
 
             # zero the parameter gradients
             optimizer.zero_grad()
             
             # forward pass
-            output = self.model(sequence)
-            
+            output = self.model(sequence_batch)
             # compute loss
-            current_loss = loss_function(output.squeeze(), label.float())
+            current_loss = loss_function(output, label_batch)
             losses.append(current_loss.item())
 
             # backward and udpate parameters
