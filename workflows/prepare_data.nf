@@ -28,6 +28,7 @@ workflow PREPARE_DATA {
         FETCH_DATA (encode_sheet)
         functional_data = PREPROCESS_DATA(FETCH_DATA.out.data)
 
+        functional_data.view()
         // Split dataset into train, test, and validation sets
         // and extract the corresponding fasta files
         SPLIT_DATA(genome, chunk_size)
@@ -41,8 +42,6 @@ workflow PREPARE_DATA {
         SPLIT_VALIDATION_BED(validation_fasta, "${params.bed_file_max_size}")
         SPLIT_TEST_BED(test_fasta, "${params.bed_file_max_size}")
         
-        SPLIT_TRAIN_BED.out.split_files.view()
-
         // Create dataset objects
         train      = CREATE_DATASET_OBJECT_TRAIN(SPLIT_TRAIN_BED.out.split_files.transpose())
         validation = CREATE_DATASET_OBJECT_VALIDATION(SPLIT_VALIDATION_BED.out.split_files.transpose())
@@ -59,10 +58,10 @@ workflow PREPARE_DATA {
         test = CREATE_DATASET_OBJECT.out.object
     } 
 
-    // emit: 
-    // train 
-    // validation 
-    // test 
+    emit: 
+    train 
+    validation 
+    test 
 
 
 }

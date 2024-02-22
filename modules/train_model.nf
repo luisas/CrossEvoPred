@@ -4,13 +4,13 @@ process TRAIN_MODEL {
     input:
     tuple val(meta),  file(training_dataset)
     tuple val(meta2), file(config)
-    //tuple val(meta2), file(validation_dataset)
 
     output:
-    tuple val(meta), file("model.pkl"), emit: model
+    tuple val(meta), file("*.pkl"), emit: model
 
     script:
+    prefix = task.ext.prefix ?: "model"
     """
-    train.py --training_dataset $training_dataset --config $config --model_name "model.pkl"
+    train.py --training_dataset $training_dataset --config $config --model_name "${prefix}.pkl"
     """
 }

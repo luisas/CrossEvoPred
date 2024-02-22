@@ -34,10 +34,11 @@ workflow CROSS_EVO_PRED {
                                 it -> [[id:it.parent.baseName], it] }.groupTuple(by:0)
 
     // Prepare the data into pytorch dataset objects
-    PREPARE_DATA ( genome, chunk_size, encode_sheet)
+    PREPARE_DATA ( genome, chunk_size, encode_sheet )
 
+    //PREPARE_DATA.out.train.view()
     // Train the model
-    //TRAIN_MODEL ( PREPARE_DATA.out.train, config)
+    TRAIN_MODEL ( PREPARE_DATA.out.train, config)
 
     // Evaluate the model
     //EVALUATE_MODEL (TRAIN_MODEL.out.model, PREPARE_DATA.out.test)

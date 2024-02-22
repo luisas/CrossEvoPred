@@ -11,7 +11,7 @@ class DummyModel(nn.Module):
     def __init__(self):
         super(DummyModel, self).__init__()
         self.sequence_length = 1000
-        self.label_size = 7
+        self.label_size = 8
         self.alphabet_size = 4
 
         # first convolutional layer
