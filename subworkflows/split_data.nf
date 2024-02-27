@@ -1,5 +1,5 @@
 include{ SPLIT_RANDOM } from '../modules/split_random'
-
+include{ COBALT } from '../subworkflows/cobalt'
 
 workflow SPLIT_DATA {
 
@@ -8,7 +8,12 @@ workflow SPLIT_DATA {
     chunk_size
 
     main: 
+
     SPLIT_RANDOM(genome, chunk_size)
+
+    COBALT(genome, chunk_size)
+    
+    
 
     emit:
     train = SPLIT_RANDOM.out.train

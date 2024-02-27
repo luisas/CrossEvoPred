@@ -59,7 +59,7 @@ workflow CROSS_EVO_PRED {
     // Evaluate the model
     train_and_validation = training_dataset.combine(validation_dataset, by:0 ).map{
                             meta, train, validation -> [meta, train+validation]}
-    TRAIN_MODEL ( train_and_validation, config )
+    //TRAIN_MODEL ( train_and_validation, config )
     //EVALUATE_MODEL (TRAIN_MODEL.out.model, PREPARE_DATA.out.test)
 
 }

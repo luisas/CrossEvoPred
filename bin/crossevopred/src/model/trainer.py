@@ -215,10 +215,6 @@ class Trainer(ABC):
             return total_loss / num_samples
     
 
-
-
-
-    @staticmethod
     def save(self, path):
         """
         Save the trainer
