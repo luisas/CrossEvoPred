@@ -5,3 +5,4 @@ work
 .~lock*
 __pycache__
 simulated
+.nextflow*

@@ -40,6 +40,11 @@ workflow CROSS_EVO_PRED {
     validation_dataset = PREPARE_DATA.out.validation
     test_dataset = PREPARE_DATA.out.test
 
+    // take only the first 10 samples for testing
+    training_dataset = training_dataset.map{ meta, data -> [meta, data[0..2]]}
+    training_dataset.view()
+
+    print("params.tune: ${params.tune}")
     // Train the model
     if( params.tune )  {
         tune_config = Channel.fromPath("${params.tune_config}").map{
@@ -54,7 +59,7 @@ workflow CROSS_EVO_PRED {
     // Evaluate the model
     train_and_validation = training_dataset.combine(validation_dataset, by:0 ).map{
                             meta, train, validation -> [meta, train+validation]}
-    train_and_validation.view()
+    TRAIN_MODEL ( train_and_validation, config )
     //EVALUATE_MODEL (TRAIN_MODEL.out.model, PREPARE_DATA.out.test)
 
 }

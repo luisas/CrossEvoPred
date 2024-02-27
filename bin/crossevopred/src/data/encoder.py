@@ -127,10 +127,10 @@ class Encoder():
         decoded_sequence = ""
         encoded_sequence = encoded_sequence.reshape(4, -1)
         for one_hot_vector in encoded_sequence.T:
-            if np.sum(one_hot_vector) == 0:
+            if np.sum(one_hot_vector.numpy()) == 0:
                 decoded_sequence += "N"
             else:
-                index = np.argmax(one_hot_vector)
+                index = np.argmax(one_hot_vector.numpy())
                 if index < len(self.alphabet):
                     decoded_sequence += self.alphabet[index]
                 else:

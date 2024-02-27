@@ -48,6 +48,9 @@ class DummyModel(nn.Module):
         self.linear_layer1[0].bias.requires_grad = False
 
         self.linear_layer2 = nn.Linear(self.linear_layer1_size, self.label_size)
+
+        # sigmoid
+        self.sigmoid = nn.Sigmoid()
         
 
     def forward(self, x):
@@ -55,6 +58,7 @@ class DummyModel(nn.Module):
         x = x.view(x.size(0), -1)
         x = self.linear_layer1(x)
         x = self.linear_layer2(x)
+        x = self.sigmoid(x)
         return x
 
 

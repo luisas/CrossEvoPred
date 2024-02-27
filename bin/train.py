@@ -7,12 +7,13 @@ import numpy as np
 from torch.utils.data import ConcatDataset, DataLoader
 
 
-
 parser = argparse.ArgumentParser(description='Train a model on a given dataset')
 parser.add_argument('--training_dataset', nargs='+', help='path to training data')
 # training dataset is a list of paths to the training datasets
 parser.add_argument('--config', type=str, help='path to config file')
 parser.add_argument('--model_name', type=str, help='path to model')
+parser.add_argument('--trainer_name', type=str, help='path to trainer')
+
 args = parser.parse_args()
 print("Arguments parsed")
 
@@ -51,3 +52,6 @@ trainer.train( args.config )
 
 # Save the model 
 model.save_model( args.model_name )
+
+print("Triner name: ", args.trainer_name)
+trainer.save( args.trainer_name )

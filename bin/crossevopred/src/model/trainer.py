@@ -13,7 +13,7 @@ from abc import ABC
 import os
 import json
 from ..data.encoder import *
-import wandb
+import pickle
 
 class Trainer(ABC):
 
@@ -183,8 +183,9 @@ class Trainer(ABC):
             data_loader (torch.utils.data.DataLoader): Data loader
             loss_function (torch.nn.Module): Loss function
         """
+        if loss_function != "corrcoef":
+            loss_function = getattr(nn, loss_function)()
 
-        loss_function = getattr(nn, loss_function)()
         device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
         total_loss = 0.0
@@ -198,7 +199,10 @@ class Trainer(ABC):
 
                 output = self.model(sequence)
 
-                loss = loss_function(output.squeeze(), label.float())
+                if loss_function == "corrcoef":
+                    loss  = np.corrcoef(output.squeeze().cpu().detach().numpy(), label.cpu().detach().numpy())[0,1]
+                else:
+                    loss = loss_function(output.squeeze(), label.float())
                 if all_losses:
                     losses += [loss.item()]
 
@@ -209,5 +213,33 @@ class Trainer(ABC):
             return losses
         else:
             return total_loss / num_samples
+    
 
 
+
+
+    @staticmethod
+    def save(self, path):
+        """
+        Save the trainer
+
+        Args:
+            path (str): Path to the file where the trainer will be saved
+        """
+        with open(path, "wb") as file:
+            pickle.dump(self, file)
+        message(f"Trainer saved in {path}", verbose=self.verbose)
+
+    @staticmethod
+    def load(path):
+        """
+        Load a saved trainer object
+
+        Args:
+            path (str): Path to the saved trainer file
+
+        Returns:
+            Trainer: The loaded Trainer object
+        """
+        with open(path, "rb") as file:
+            return pickle.load(file)
