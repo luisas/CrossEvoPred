@@ -17,7 +17,7 @@ import pickle
 
 class Trainer(ABC):
 
-    def __init__(self, model, training_loader, validation_loader, test_loader, save_training_infos = True, verbose=False) -> None:
+    def __init__(self, model, training_loader, validation_loader, test_loader, save_training_infos = True, reverse_complement = False, shift = False, verbose=False) -> None:
         # General attributes
         self.verbose = verbose
         self.save_training_infos = save_training_infos
@@ -30,6 +30,10 @@ class Trainer(ABC):
         self.training_loader = training_loader
         self.validation_loader = validation_loader
         self.test_loader = test_loader
+        # Augmentation options
+        self.reverse_complement = reverse_complement
+        self.shift = shift
+    
 
     def train(self, config):
         """
@@ -154,6 +158,11 @@ class Trainer(ABC):
 
         for batch_idx, (sequence_batch, label_batch) in enumerate(data_loader, 0):
 
+            if self.reverse_complement:
+                sequence_batch_rc, label_batch_rc = self._reverse_complement(sequence_batch, label_batch)
+                sequence_batch = torch.cat((sequence_batch, sequence_batch_rc), 0)
+                label_batch = torch.cat((label_batch, label_batch_rc), 0)
+                
             # send data to device
             sequence_batch,label_batch = sequence_batch.to(device), label_batch.to(device)
 
@@ -213,6 +222,18 @@ class Trainer(ABC):
             return losses
         else:
             return total_loss / num_samples
+        
+    def _reverse_complement(self, sequence, label):
+        """
+        Reverse complement the sequence and label
+
+        Args:
+            sequence (torch.Tensor): Sequence
+            label (torch.Tensor): Label
+        """
+        sequence = torch.flip(sequence, [1,2])
+        label = torch.flip(label, [1])
+        return sequence, label
     
 
     def save(self, path):

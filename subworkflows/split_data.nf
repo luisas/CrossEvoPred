@@ -11,7 +11,7 @@ workflow SPLIT_DATA {
 
     SPLIT_RANDOM(genome, chunk_size)
 
-    COBALT(genome, chunk_size)
+    //COBALT(genome, chunk_size)
     
     
 

@@ -13,6 +13,10 @@ include { SPLIT_FILE as SPLIT_TRAIN_BED;
           SPLIT_FILE as SPLIT_VALIDATION_BED; 
           SPLIT_FILE as SPLIT_TEST_BED } from '../modules/split_file'
 
+include { SUBSAMPLE_BED as SUBSAMPLE_BED_TRAINING;
+            SUBSAMPLE_BED as SUBSAMPLE_BED_VALIDATION;
+            SUBSAMPLE_BED as SUBSAMPLE_BED_TEST } from '../modules/SUBSAMPLE_BED'
+
 workflow PREPARE_DATA {
 
     take: 
@@ -28,13 +32,23 @@ workflow PREPARE_DATA {
         FETCH_DATA (encode_sheet)
         functional_data = PREPROCESS_DATA(FETCH_DATA.out.data)
 
-        functional_data.view()
         // Split dataset into train, test, and validation sets
         // and extract the corresponding fasta files
         SPLIT_DATA(genome, chunk_size)
-        train_fasta      = PREP_INPUT_FILE_TRAIN(SPLIT_DATA.out.train, functional_data, genome, "${params.bin_size}", "mean")
-        validation_fasta = PREP_INPUT_FILE_VALIDATION(SPLIT_DATA.out.validation, functional_data, genome, "${params.bin_size}", "mean")
-        test_fasta       = PREP_INPUT_FILE_TEST(SPLIT_DATA.out.test, functional_data, genome, "${params.bin_size}", "mean")    
+        genome_chunks_for_training = SPLIT_DATA.out.train
+        genome_chunks_for_validation = SPLIT_DATA.out.validation
+        genome_chunks_for_testing = SPLIT_DATA.out.test
+
+        if (params.subsample){
+            SUBSAMPLE_BED_TRAINING(genome_chunks_for_training, "${params.subsample_size}")
+            SUBSAMPLE_BED_VALIDATION(genome_chunks_for_validation, "${params.subsample_size}")
+            SUBSAMPLE_BED_TEST(genome_chunks_for_testing, "${params.subsample_size}")
+        }
+
+
+        train_fasta      = PREP_INPUT_FILE_TRAIN(genome_chunks_for_training, functional_data, genome, "${params.bin_size}", "mean")
+        validation_fasta = PREP_INPUT_FILE_VALIDATION(genome_chunks_for_validation, functional_data, genome, "${params.bin_size}", "mean")
+        test_fasta       = PREP_INPUT_FILE_TEST(genome_chunks_for_testing, functional_data, genome, "${params.bin_size}", "mean")    
         
         // If too big, split the bed file into smaller files
         SPLIT_TRAIN_BED(train_fasta, "${params.bed_file_max_size}")

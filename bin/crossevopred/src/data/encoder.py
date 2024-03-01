@@ -127,10 +127,13 @@ class Encoder():
         decoded_sequence = ""
         encoded_sequence = encoded_sequence.reshape(4, -1)
         for one_hot_vector in encoded_sequence.T:
-            if np.sum(one_hot_vector.numpy()) == 0:
+            # check if one hot vector is numpy array
+            if not isinstance(one_hot_vector, np.ndarray):
+                one_hot_vector = one_hot_vector.numpy()
+            if np.sum(one_hot_vector) == 0:
                 decoded_sequence += "N"
             else:
-                index = np.argmax(one_hot_vector.numpy())
+                index = np.argmax(one_hot_vector)
                 if index < len(self.alphabet):
                     decoded_sequence += self.alphabet[index]
                 else:
@@ -144,4 +147,5 @@ class DNAEncoder(Encoder):
 
     def __init__(self, alphabet="acgt", verbose=False) -> None:
         super().__init__(alphabet, verbose=verbose)
+
     
