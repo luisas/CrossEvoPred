@@ -44,7 +44,6 @@ workflow CROSS_EVO_PRED {
     training_dataset = training_dataset.map{ meta, data -> [meta, data[0..2]]}
     training_dataset.view()
 
-    print("params.tune: ${params.tune}")
     // Train the model
     // if( params.tune )  {
     //     tune_config = Channel.fromPath("${params.tune_config}").map{
