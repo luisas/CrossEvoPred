@@ -15,6 +15,9 @@ workflow PREPROCESS_DATA{
 
     BIG_TO_BEDGRAPH(functional_data_branched.bigWig)
 
+    // Add clipping step here
+    
+
     emit:
     data = BIG_TO_BEDGRAPH.out.bedgraph
 

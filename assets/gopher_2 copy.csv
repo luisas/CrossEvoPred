@@ -1,0 +1,3 @@
+File_accession,file_format,file_type,output_type,assay_title,assembly,link,Experiment_accession,Biosample_term_name,Biosample_accession,Organism,Biosample_ontology,Perturbed,Biological_replicate,Technical_replicate,Biosample_type
+ENCFF062JUV,bigWig,bigWig,fold change over control,ATAC-seq,GRCh38,https://www.encodeproject.org/files/ENCFF062JUV/@@download/ENCFF062JUV.bigWig,ENCSR512YXO,GM21381,ENCBS295WIH,Homo sapiens,/biosample-types/cell_line_CLO_0015895/,False,1,1,cell
+ENCFF276QZQ,bigWig,bigWig,fold change over control,ATAC-seq,GRCh38,https://www.encodeproject.org/files/ENCFF276QZQ/@@download/ENCFF276QZQ.bigWig,ENCSR485TLP,GM23338,"ENCBS057LKL,ENCBS994YIB,ENCBS247UHY",Homo sapiens,/biosample-types/cell_line_EFO_0007950/,False,"1,3,2",1,cell

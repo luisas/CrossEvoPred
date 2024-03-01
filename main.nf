@@ -46,19 +46,19 @@ workflow CROSS_EVO_PRED {
 
     print("params.tune: ${params.tune}")
     // Train the model
-    if( params.tune )  {
-        tune_config = Channel.fromPath("${params.tune_config}").map{
-                            it -> [[id:it.parent.baseName], it] }.groupTuple(by:0)
-        tune_config.view()
-        TUNE_MODEL ( training_dataset, validation_dataset, tune_config)
-        config = TUNE_MODEL.out.config
-    }
+    // if( params.tune )  {
+    //     tune_config = Channel.fromPath("${params.tune_config}").map{
+    //                         it -> [[id:it.parent.baseName], it] }.groupTuple(by:0)
+    //     tune_config.view()
+    //     TUNE_MODEL ( training_dataset, validation_dataset, tune_config)
+    //     config = TUNE_MODEL.out.config
+    // }
 
 
-    // Merge train and validation 
-    // Evaluate the model
-    train_and_validation = training_dataset.combine(validation_dataset, by:0 ).map{
-                            meta, train, validation -> [meta, train+validation]}
+    // // Merge train and validation 
+    // // Evaluate the model
+    // train_and_validation = training_dataset.combine(validation_dataset, by:0 ).map{
+    //                         meta, train, validation -> [meta, train+validation]}
     //TRAIN_MODEL ( train_and_validation, config )
     //EVALUATE_MODEL (TRAIN_MODEL.out.model, PREPARE_DATA.out.test)
 
