@@ -13,6 +13,6 @@ process SPLIT_FILE{
     #!/bin/bash
     split -d -l ${bed_file_max_size} ${file} ${prefix}_
     # remove files that have fewer lines than the max size
-    wc -l ${prefix}_* | awk -v max=${bed_file_max_size} '\$1 < max {print \$2}' | xargs rm
+    # wc -l ${prefix}_* | awk -v max=${bed_file_max_size} '\$1 < max {print \$2}' | xargs rm
     """
 }

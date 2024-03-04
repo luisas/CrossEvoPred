@@ -34,15 +34,19 @@ workflow CROSS_EVO_PRED {
     config = Channel.fromPath("${params.config}").map{
                                 it -> [[id:it.parent.baseName], it] }.groupTuple(by:0)
 
+    blacklist = Channel.fromPath("${params.blacklist}").map{ 
+                                it -> [[id:it.parent.baseName], it] }.groupTuple(by:0)
+
+    blacklist.view()
     // Prepare the data into pytorch dataset objects
-    PREPARE_DATA ( genome, chunk_size, encode_sheet )
+    PREPARE_DATA ( genome, chunk_size, encode_sheet, blacklist )
     training_dataset = PREPARE_DATA.out.train
     validation_dataset = PREPARE_DATA.out.validation
     test_dataset = PREPARE_DATA.out.test
 
     // take only the first 10 samples for testing
-    training_dataset = training_dataset.map{ meta, data -> [meta, data[0..2]]}
-    training_dataset.view()
+    //training_dataset = training_dataset.map{ meta, data -> [meta, data[0..2]]}
+    //training_dataset.view()
 
     // Train the model
     // if( params.tune )  {
@@ -56,10 +60,10 @@ workflow CROSS_EVO_PRED {
 
     // // Merge train and validation 
     // // Evaluate the model
-    train_and_validation = training_dataset.combine(validation_dataset, by:0 ).map{
-                            meta, train, validation -> [meta, train+validation]}
-    TRAIN_MODEL ( train_and_validation, config )
-    //EVALUATE_MODEL (TRAIN_MODEL.out.model, PREPARE_DATA.out.test)
+    // train_and_validation = training_dataset.combine(validation_dataset, by:0 ).map{
+    //                         meta, train, validation -> [meta, train+validation]}
+    // TRAIN_MODEL ( train_and_validation, config )
+    // EVALUATE_MODEL (TRAIN_MODEL.out.model, PREPARE_DATA.out.test)
 
 }
 

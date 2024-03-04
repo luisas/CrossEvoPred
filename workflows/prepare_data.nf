@@ -17,12 +17,14 @@ include { SUBSAMPLE_BED as SUBSAMPLE_BED_TRAINING;
             SUBSAMPLE_BED as SUBSAMPLE_BED_VALIDATION;
             SUBSAMPLE_BED as SUBSAMPLE_BED_TEST } from '../modules/SUBSAMPLE_BED'
 
+
 workflow PREPARE_DATA {
 
     take: 
     genome
     chunk_size
     encode_sheet
+    blacklist
     
     main: 
 
@@ -30,7 +32,7 @@ workflow PREPARE_DATA {
     if (params.fetch_data){
         // Fetch the data
         FETCH_DATA (encode_sheet)
-        functional_data = PREPROCESS_DATA(FETCH_DATA.out.data)
+        functional_data = PREPROCESS_DATA(FETCH_DATA.out.data, blacklist)
 
         // Split dataset into train, test, and validation sets
         // and extract the corresponding fasta files
@@ -39,16 +41,20 @@ workflow PREPARE_DATA {
         genome_chunks_for_validation = SPLIT_DATA.out.validation
         genome_chunks_for_testing = SPLIT_DATA.out.test
 
+
         if (params.subsample){
             SUBSAMPLE_BED_TRAINING(genome_chunks_for_training, "${params.subsample_size}")
             SUBSAMPLE_BED_VALIDATION(genome_chunks_for_validation, "${params.subsample_size}")
             SUBSAMPLE_BED_TEST(genome_chunks_for_testing, "${params.subsample_size}")
+            genome_chunks_for_training = SUBSAMPLE_BED_TRAINING.out.bed
+            genome_chunks_for_validation = SUBSAMPLE_BED_VALIDATION.out.bed
+            genome_chunks_for_testing = SUBSAMPLE_BED_TEST.out.bed
         }
 
 
-        train_fasta      = PREP_INPUT_FILE_TRAIN(genome_chunks_for_training, functional_data, genome, "${params.bin_size}", "mean")
-        validation_fasta = PREP_INPUT_FILE_VALIDATION(genome_chunks_for_validation, functional_data, genome, "${params.bin_size}", "mean")
-        test_fasta       = PREP_INPUT_FILE_TEST(genome_chunks_for_testing, functional_data, genome, "${params.bin_size}", "mean")    
+        train_fasta      = PREP_INPUT_FILE_TRAIN(genome_chunks_for_training, functional_data, genome, "${params.bin_size}", "sum")
+        validation_fasta = PREP_INPUT_FILE_VALIDATION(genome_chunks_for_validation, functional_data, genome, "${params.bin_size}", "sum")
+        test_fasta       = PREP_INPUT_FILE_TEST(genome_chunks_for_testing, functional_data, genome, "${params.bin_size}", "sum")    
         
         // If too big, split the bed file into smaller files
         SPLIT_TRAIN_BED(train_fasta, "${params.bed_file_max_size}")

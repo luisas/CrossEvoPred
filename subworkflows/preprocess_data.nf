@@ -1,12 +1,14 @@
 
-include{ BIG_TO_BEDGRAPH } from '../modules/big_to_bedgraph'
-include{ CLIP_BEDGRAPH   } from '../modules/CLIP_BEDGRAPH'
+include{ BIG_TO_BEDGRAPH    } from '../modules/BIG_TO_BEDGRAPH'
+include{ CLIP_BEDGRAPH      } from '../modules/CLIP_BEDGRAPH'
 include{ SUBSET_FOR_TESTING } from '../modules/SUBSET_FOR_TESTING'
+include{ CORRECT_BLACKLIST  } from '../modules/CORRECT_BLACKLIST'
 
 workflow PREPROCESS_DATA{
 
     take: 
     functional_data
+    blacklist_regions
 
     main:
 
@@ -26,10 +28,10 @@ workflow PREPROCESS_DATA{
         bedgraph = CLIP_BEDGRAPH.out.bedgraph
     }
     
-    // if( params.blacklist ){
-    //     CORRECT_BLACKLIST(bedgraph, blacklist_regions)
-    //     bedgraph = CORRECT_BLACKLIST.out.bedgraph
-    // }
+    if( params.blacklist ){
+        CORRECT_BLACKLIST(bedgraph, blacklist_regions)
+        bedgraph = CORRECT_BLACKLIST.out.bedgraph
+    }
 
     emit:
     data = bedgraph

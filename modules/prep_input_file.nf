@@ -16,12 +16,8 @@ process PREP_INPUT_FILE{
   
     script:
     """
-    # Add zeros to the bedgraph file (depending on the metric, we can remove in the future)
-    awk 'BEGIN {OFS="\t"} {print \$1, "0", \$2}' $fai > genome.bed
-    bedtools intersect -a $bedgraph -b genome.bed | \
-    bedtools complement -i - -g $fai | awk -v OFS='\\t' '{print \$1, \$2, \$3, "0"}' > complement.bedgraph
-    bedtools unionbedg -i $bedgraph complement.bedgraph > ${bed.baseName}_with_zeros.bedgraph
-    echo "bedgraph with zeros created"
+    # !/bin/bash
+    echo "Starting"
 
     # Create windows in the original bed file
     bedtools makewindows -b $bed -w $window_size > ${bed.baseName}_windows.bed
@@ -29,12 +25,14 @@ process PREP_INPUT_FILE{
     echo "windows created"
 
     # Map begraph to the windows
-    bedtools map -a ${bed.baseName}_windows_sorted.bed -b ${bed.baseName}_with_zeros.bedgraph -c 4 -o $metric > ${bed.baseName}_windowed.bedgraph
+    bedtools map -a ${bed.baseName}_windows_sorted.bed -b $bedgraph -c 4 -o sum > bed_windowed.bedgraph
+    # substitute . for 0
+    sed -i 's/\./0/g' bed_windowed.bedgraph
     echo "bedgraph mapped to windows"
 
     # Map original bed to the windowed bedgraph 
     bedtools sort -i $bed > ${bed.baseName}_sorted.bed
-    bedtools map -a ${bed.baseName}_sorted.bed -b ${bed.baseName}_windowed.bedgraph -c 4 -o collapse > ${bed.baseName}_labels.bed
+    bedtools map -a ${bed.baseName}_sorted.bed -b bed_windowed.bedgraph -c 4 -o collapse > ${bed.baseName}_labels.bed
     echo "original bed mapped to windowed bedgraph"
 
     # -----------------------------------------------------------
