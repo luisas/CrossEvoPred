@@ -8,7 +8,7 @@ workflow PREPROCESS_DATA{
 
     take: 
     functional_data
-    blacklist_regions
+    
 
     main:
 
@@ -26,11 +26,6 @@ workflow PREPROCESS_DATA{
     if (params.clip){
         CLIP_BEDGRAPH(bedgraph, params.clip_threshold)
         bedgraph = CLIP_BEDGRAPH.out.bedgraph
-    }
-    
-    if( params.blacklist ){
-        CORRECT_BLACKLIST(bedgraph, blacklist_regions)
-        bedgraph = CORRECT_BLACKLIST.out.bedgraph
     }
 
     emit:

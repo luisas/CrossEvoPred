@@ -8,13 +8,13 @@ nextflow.enable.dsl = 2
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 */
 include { validateParameters; paramsHelp; paramsSummaryLog; fromSamplesheet } from 'plugin/nf-validation'
-include {   PREPARE_DATA     } from './workflows/prepare_data'
-include {   TRAIN_MODEL      } from './modules/train_model'
-include {   TUNE_MODEL       } from './modules/tune_model'
-include {   EVALUATE_MODEL   } from './modules/evaluate_model'
+include {   PREPARE_DATA     } from './workflows/PREPARE_DATA'
+include {   TRAIN_MODEL      } from './modules/TRAIN_MODEL'
+include {   TUNE_MODEL       } from './modules/TUNE_MODEL'
+include {   EVALUATE_MODEL   } from './modules/EVALUATE_MODEL'
 
 // Prepare the pipeline parameters
-chunk_size = "${params.chunk_size}"
+chunk_size = "${params.sequence_size}"
 
 
 
@@ -23,7 +23,9 @@ chunk_size = "${params.chunk_size}"
 //
 workflow CROSS_EVO_PRED {
 
-
+    //
+    // Prepare input channels
+    //
     encode_sheet = Channel.fromSamplesheet('encode_sheet')
 
     genome = Channel.fromPath("${params.genome}/chr1.fa*").map{
@@ -37,16 +39,17 @@ workflow CROSS_EVO_PRED {
     blacklist = Channel.fromPath("${params.blacklist}").map{ 
                                 it -> [[id:it.parent.baseName], it] }.groupTuple(by:0)
 
-    blacklist.view()
-    // Prepare the data into pytorch dataset objects
+    //
+    // Download, Preprocess and Prepare the data into pytorch dataset objects
+    //
     PREPARE_DATA ( genome, chunk_size, encode_sheet, blacklist )
     training_dataset = PREPARE_DATA.out.train
     validation_dataset = PREPARE_DATA.out.validation
     test_dataset = PREPARE_DATA.out.test
 
     // take only the first 10 samples for testing
-    //training_dataset = training_dataset.map{ meta, data -> [meta, data[0..2]]}
-    //training_dataset.view()
+    // training_dataset = training_dataset.map{ meta, data -> [meta, data[0..2]]}
+    // training_dataset.view()
 
     // Train the model
     // if( params.tune )  {

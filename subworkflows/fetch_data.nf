@@ -1,5 +1,5 @@
 
-include{ DOWNLOAD_ENCODE } from '../modules/download_encode'
+include{ DOWNLOAD_ENCODE } from '../modules/DOWNLOAD_ENCODE'
 
 workflow FETCH_DATA {
 

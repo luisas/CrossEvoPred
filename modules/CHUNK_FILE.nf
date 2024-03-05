@@ -1,4 +1,4 @@
-process SPLIT_FILE{
+process CHUNK_FILE{
     
     input:
     tuple val(meta), path(file)
