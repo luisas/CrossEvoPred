@@ -107,7 +107,9 @@ class CNNBaseline(Model):
         x = self.conv2(x)
         x = self.conv3(x)
         x = self.flatten(x)
+        # bottleneck layer
         x = self.dense1(x)
+        # now reshape to target resolution
         x = self.dense2(x)
         print(x.shape)
         x = self.last_conv(x)
