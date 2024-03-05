@@ -11,6 +11,10 @@ process TRAIN_MODEL {
     script:
     prefix = task.ext.prefix ?: "model"
     """
-    train.py --training_dataset $training_dataset --config $config --model_name "${prefix}.pkl" --trainer_name "${prefix}_trainer.pkl"
+    train.py --training_dataset $training_dataset \
+             --config $config \
+             --model_name "${prefix}.pkl" \
+             --trainer_name "${prefix}_trainer.pkl"\
+             --model_type CNNBaseline
     """
 }

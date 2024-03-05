@@ -14,10 +14,11 @@ import os
 import json
 from ..data.encoder import *
 import pickle
+import random
 
 class Trainer(ABC):
 
-    def __init__(self, model, training_loader, validation_loader, test_loader, save_training_infos = True, reverse_complement = False, shift = False, verbose=False) -> None:
+    def __init__(self, model, training_loader, validation_loader, test_loader, save_training_infos = True, reverse_complement = False, random_shift = False, rc_sequence_length = 1000, verbose=False) -> None:
         # General attributes
         self.verbose = verbose
         self.save_training_infos = save_training_infos
@@ -32,7 +33,8 @@ class Trainer(ABC):
         self.test_loader = test_loader
         # Augmentation options
         self.reverse_complement = reverse_complement
-        self.shift = shift
+        self.random_shift = random_shift
+        self.rc_sequence_length = rc_sequence_length
     
 
     def train(self, config):
@@ -162,7 +164,15 @@ class Trainer(ABC):
                 sequence_batch_rc, label_batch_rc = self._reverse_complement(sequence_batch, label_batch)
                 sequence_batch = torch.cat((sequence_batch, sequence_batch_rc), 0)
                 label_batch = torch.cat((label_batch, label_batch_rc), 0)
-                
+            
+            if self.random_shift:
+                seq_len = sequence_batch.size(2)
+                subseq_start = random.randint(0, seq_len - self.rc_sequence_length)
+                subseq_end = subseq_start + self.rc_sequence_length
+                sequence_batch = sequence_batch[:,:,subseq_start:subseq_end]
+                label_batch = label_batch[:,subseq_start:subseq_end]
+        
+            
             # send data to device
             sequence_batch,label_batch = sequence_batch.to(device), label_batch.to(device)
 

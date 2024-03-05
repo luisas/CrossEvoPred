@@ -62,9 +62,6 @@ class DummyModel(nn.Module):
         return x
 
 
-    def save_model(self, path):
-        torch.save(self.state_dict(), path)
-
     def evaluate(self, test_dataset_loader):
         device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
         self.to(device)
@@ -82,19 +79,3 @@ class DummyModel(nn.Module):
         return pd.DataFrame(correlations)
         
                 
-    def initialize_weights(self, initializer_name):
-        initializer = getattr(init, initializer_name)
-        for m in self.modules():
-            if isinstance(m, nn.Conv1d):
-                initializer(m.weight)
-                if m.bias is not None:
-                    init.constant_(m.bias, 0)
-            elif isinstance(m, nn.Linear):
-                initializer(m.weight)
-                if m.bias is not None:
-                    init.constant_(m.bias, 0)
-            elif isinstance(m, nn.BatchNorm1d):
-                init.constant_(m.weight, 1)
-                init.constant_(m.bias, 0)
-                init.constant_(m.running_mean, 0)
-                init.constant_(m.running_var, 1)
