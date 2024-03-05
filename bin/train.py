@@ -23,11 +23,6 @@ seed = 42
 torch.manual_seed(seed)
 np.random.seed(seed)
 
-# extract model from config file
-# args.config is the path to the config file
-
-
-
 # Concat the training dataset
 # args.training_dataset is a list of paths to the training datasets
 # We concatenate them to create a single dataset
