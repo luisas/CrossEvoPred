@@ -167,12 +167,16 @@ class Trainer(ABC):
             
             if self.random_shift:
                 seq_len = sequence_batch.size(2)
-                subseq_start = random.randint(0, seq_len - self.rc_sequence_length)
+                label_len = label_batch.size(1)
+                window = int(seq_len / label_len) 
+                # the random shift must be a multiple of 128 but may not exceed the sequence length - rc_sequence_length
+                subseq_start = random.choice(range(0, seq_len - self.rc_sequence_length, window))
                 subseq_end = subseq_start + self.rc_sequence_length
                 sequence_batch = sequence_batch[:,:,subseq_start:subseq_end]
-                label_batch = label_batch[:,subseq_start:subseq_end]
-        
-            
+                label_start = int(subseq_start/window)
+                label_end = int(subseq_end/window)
+                label_batch = label_batch[:,label_start:label_end]
+                    
             # send data to device
             sequence_batch,label_batch = sequence_batch.to(device), label_batch.to(device)
 
@@ -182,6 +186,7 @@ class Trainer(ABC):
             # forward pass
             output = self.model(sequence_batch)
             # compute loss
+            print(loss_function)
             current_loss = loss_function(output, label_batch)
             losses.append(current_loss.item())
 
