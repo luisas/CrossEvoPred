@@ -85,8 +85,6 @@ workflow PREPARE_DATA {
         validation_fasta = PREP_INPUT_FILE_VALIDATION(genome_chunks_for_validation, functional_data, genome, "${params.label_window_size}", "sum", "${params.coverage_threshold}")
         test_fasta       = PREP_INPUT_FILE_TEST(genome_chunks_for_testing, functional_data, genome, "${params.label_window_size}", "sum", "${params.coverage_threshold}")    
         
-
-        train_fasta.view()
         //
         // If too big, split the bed file into smaller files
         //

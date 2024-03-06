@@ -49,6 +49,8 @@ trainer = Trainer(model = model,
                   validation_loader = None,
                   test_loader = None,
                   save_training_infos = True,
+                  random_shift=True,
+                  rc_sequence_length = 2048,
                   verbose = True)
 print("Trainer initialized")
 

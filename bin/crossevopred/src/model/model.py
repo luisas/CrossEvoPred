@@ -7,7 +7,6 @@ class Model(nn.Module):
     def __init__(self):
         super(Model, self).__init__()
     
-    @staticmethod
     def save_model(self, path):
         """
         Save the model

@@ -186,7 +186,6 @@ class Trainer(ABC):
             # forward pass
             output = self.model(sequence_batch)
             # compute loss
-            print(loss_function)
             current_loss = loss_function(output, label_batch)
             losses.append(current_loss.item())
 
