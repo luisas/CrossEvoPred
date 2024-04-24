@@ -65,7 +65,8 @@ workflow CROSS_EVO_PRED {
     // // Evaluate the model
     train_and_validation = training_dataset.mix(validation_dataset).groupTuple()
     TRAIN_MODEL ( train_and_validation, config )
-    // EVALUATE_MODEL (TRAIN_MODEL.out.model, PREPARE_DATA.out.test)
+    model = TRAIN_MODEL.out.model
+    //EVALUATE_MODEL (model, PREPARE_DATA.out.test)
 
 }
 

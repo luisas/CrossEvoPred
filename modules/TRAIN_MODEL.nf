@@ -6,7 +6,8 @@ process TRAIN_MODEL {
     tuple val(meta2), file(config)
 
     output:
-    tuple val(meta), file("*.pkl"), emit: model
+    tuple val(meta), file("${prefix}.pkl"), emit: model
+    tuple val(meta), file("${prefix}_trainer.pkl"), emit: trainer
 
     script:
     prefix = task.ext.prefix ?: "model"

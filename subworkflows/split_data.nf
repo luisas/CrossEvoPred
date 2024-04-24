@@ -1,5 +1,6 @@
 include{ SPLIT_RANDOM } from '../modules/split_random'
 include{ COBALT } from '../subworkflows/cobalt'
+include{ SPLIT_BYCHR } from '../modules/split_bychr'
 
 workflow SPLIT_DATA {
 
@@ -9,10 +10,19 @@ workflow SPLIT_DATA {
 
     main: 
 
-    SPLIT_RANDOM(genome, chunk_size)
+    if( params.split = "random"){
+        SPLIT_RANDOM(genome, chunk_size)
+    }
+    else if( params.split = "cobalt"){
+        COBALT(genome, chunk_size)
+    }
+    else if( params.split = "bychr"){
+        SPLIT_BYCHR(genome, chunk_size)
+    }
+    else{
+        error "Invalid split method"
+    }
 
-    //COBALT(genome, chunk_size)
-    
     
 
     emit:

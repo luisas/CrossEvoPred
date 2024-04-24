@@ -1,6 +1,6 @@
 process PREP_INPUT_FILE{
 
-    container "biocontainers/bedtools:v2.27.1dfsg-4-deb_cv1"
+    container "biocontainers/bedtools:v2.27.0_cv2"
     label "process_medium"
 
     input:
