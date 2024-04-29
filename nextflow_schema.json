@@ -23,6 +23,28 @@
                     "help_text": "You will need to create a design file with information about the encode samples in your experiment before running the pipeline. Use this parameter to specify its location. It has to be a comma-separated file with 3 columns, and a header row. See [usage docs](https://nf-co.re/multiplesequencealign/usage#samplesheet-input).",
                     "fa_icon": "fas fa-file-csv"
                 },
+                "bigwigs": {
+                    "type": "string",
+                    "format": "file-path",
+                    "exists": true,
+                    "mimetype": "text/csv",
+                    "schema": "assets/schema_bigwigs.json",
+                    "pattern": "^\\S+\\.csv$",
+                    "description": "Path to comma-separated file containing information about the encode samples in the experiment.",
+                    "help_text": "You will need to create a design file with information about the encode samples in your experiment before running the pipeline. Use this parameter to specify its location. It has to be a comma-separated file with 3 columns, and a header row. See [usage docs](https://nf-co.re/multiplesequencealign/usage#samplesheet-input).",
+                    "fa_icon": "fas fa-file-csv"
+                },
+                "genomes": {
+                    "type": "string",
+                    "format": "file-path",
+                    "exists": true,
+                    "mimetype": "text/csv",
+                    "schema": "assets/schema_genomes.json",
+                    "pattern": "^\\S+\\.csv$",
+                    "description": "Path to comma-separated file containing information about the encode samples in the experiment.",
+                    "help_text": "You will need to create a design file with information about the encode samples in your experiment before running the pipeline. Use this parameter to specify its location. It has to be a comma-separated file with 3 columns, and a header row. See [usage docs](https://nf-co.re/multiplesequencealign/usage#samplesheet-input).",
+                    "fa_icon": "fas fa-file-csv"
+                },
                 "outdir": {
                     "type": "string",
                     "format": "directory-path",

@@ -7,7 +7,7 @@ include{ CORRECT_BLACKLIST  } from '../modules/CORRECT_BLACKLIST'
 workflow PREPROCESS_DATA{
 
     take: 
-    functional_data
+    functional_data // [metadata, data]
     
 
     main:
