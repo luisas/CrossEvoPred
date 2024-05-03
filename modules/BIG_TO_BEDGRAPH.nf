@@ -1,10 +1,10 @@
 process BIG_TO_BEDGRAPH{
     
     input:
-    tuple val(meta), file(big)
+    tuple val(meta), path(big)
 
     output:
-    tuple val(meta), file("${big.baseName}.bedgraph"), emit: bedgraph
+    tuple val(meta), path("${big.baseName}.bedgraph"), emit: bedgraph
 
     script:
     """

@@ -1,2 +1,2 @@
 id,species,genome,index
-GRCh38,Homo_sapiens,genome.fa,genome.fai
+GRCh38,Homo_sapiens,/home/luisasantus/Desktop/crg_cluster/data/CrossEvoPred/genome/Homo_sapiens/ensembl_38/Homo_sapiens.GRCh38.dna.toplevel.fa,/home/luisasantus/Desktop/crg_cluster/data/CrossEvoPred/genome/Homo_sapiens/ensembl_38/Homo_sapiens.GRCh38.dna.toplevel.fa.fai

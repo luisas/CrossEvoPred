@@ -1,2 +1,3 @@
 id,species,bigwig
-ERRTEST,Homo_sapiens,file.bigwig
+ERR1331693,Homo_sapiens,/home/luisasantus/Desktop/crg_cluster/data/CrossEvoPred/berthelot/rnaseq_processed/star_salmon/bigwig/Homo_sapiens_ERR1331693.forward.bigWig
+ERR1331713,Homo_sapiens,/home/luisasantus/Desktop/crg_cluster/data/CrossEvoPred/berthelot/rnaseq_processed/star_salmon/bigwig/Homo_sapiens_ERR1331713.forward.bigWig

@@ -24,5 +24,10 @@ search_space:
   optimizer:
     choices: ["Adam"]
 
+  batch_size:
+    space : [16, 32, 64, 128, 256, 512, 1024]
+    mode: choice
 
-
+  learning_rate:
+    space: [2,10]
+    mode: range
