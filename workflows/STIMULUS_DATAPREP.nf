@@ -10,9 +10,11 @@ workflow STIMULUS_DATAPREP {
     main:
 
     bigwigs = genomes_and_bigwigs.map{ meta, bigwig, genome, genome_index ->  [meta,bigwig]}
-
-    bigwigs.view()
     BIG_TO_BEDGRAPH(bigwigs)
+
+    // One should be with randomly chunked data
+
+    // One should be with the genes 
 
 
 

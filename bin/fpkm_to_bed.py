@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 import pandas as pd
 import argparse
 
@@ -14,7 +15,7 @@ def main():
     fpkm["start"] = fpkm.pos.str.split("-", expand = True)[0]
     fpkm["end"] = fpkm.pos.str.split("-", expand = True)[1]
 
-    bed = fpkm[["chr", "start", "end", "gene_id", "FPKM"]]
+    bed = fpkm[["chr", "start", "end", "FPKM"]]
     bed.to_csv(args.bed, index=False, sep = "\t", header = None) 
 
 if __name__ == '__main__':

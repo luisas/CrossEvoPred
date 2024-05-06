@@ -6,10 +6,10 @@ process FPKM_TO_BED{
     tuple val(meta), path(fpkm)
 
     output:
-    tuple val(meta), path(bed), emit: bed
+    tuple val(meta), path("${prefix}.bed"), emit: bed
 
     script:
-    prefix = task.ext.prefix ?: "${bed.baseName}"
+    prefix = task.ext.prefix ?: "${fpkm.baseName}"
     """
     fpkm_to_bed.py --fpkm $fpkm \
                    --bed "${prefix}.bed"
